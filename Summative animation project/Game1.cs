@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics.Eventing.Reader;
@@ -19,6 +20,7 @@ namespace Summative_animation_project
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        SoundEffect cheer;
         MouseState mouseState;
         Texture2D footallField;
         Texture2D huddle;
@@ -28,6 +30,8 @@ namespace Summative_animation_project
         Texture2D tacklingPlayer;
         Vector2 playerSpeed;
         Screen screen;
+        Texture2D touchDown;
+        SpriteFont timeFont;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -55,6 +59,9 @@ namespace Summative_animation_project
             huddle = Content.Load<Texture2D>("huddle");
             playerRunning = Content.Load <Texture2D>("playerRunning");
             tacklingPlayer = Content.Load<Texture2D>("tacklingPlayer");
+            touchDown = Content.Load<Texture2D>("touchDown");
+            cheer = Content.Load<SoundEffect>("cheer");
+            timeFont = Content.Load<SpriteFont>("TextFont");
             // TODO: use this.Content to load your game content here
         }
 
@@ -74,20 +81,28 @@ namespace Summative_animation_project
                 playerRunningRect.X += (int)playerSpeed.X;
                 playerRunningRect.Y += (int)playerSpeed.Y;
 
-                if (playerRunningRect.Right > window.Width)
-                    playerSpeed.X *= -1;
-                if (playerRunningRect.Right > window.Width)
+                //if (playerRunningRect.Right > window.Width)
+                //    playerSpeed.X *= -1;
+                if (playerRunningRect.X>850)
                 {
                     screen = Screen.touchDown;
+                    cheer.Play();
+
                 }
-                if(playerRunningRect.X>325)
+
+                if (playerRunningRect.X>325)
                 {
                     playerSpeed.Y = -2;
                 }
-                if(playerRunningRect.Y>200)
+                if (playerRunningRect.X > 480)
+                {
+                    playerSpeed.Y -= -4;
+                }
+                if (playerRunningRect.Y > 320)
                 {
                     playerSpeed.Y = 0;
                 }
+
             }
             // TODO: Add your update logic here
 
@@ -101,6 +116,8 @@ namespace Summative_animation_project
             if (screen == Screen.Intro)
             {
                 _spriteBatch.Draw(huddle, window, Color.White);
+                _spriteBatch.DrawString(timeFont, "Left click anywhere to call the play, coach!", new Vector2(32, 470), Color.Red);
+
             }
             else if (screen == Screen.play)
             {
@@ -108,8 +125,12 @@ namespace Summative_animation_project
                 _spriteBatch.Draw(playerRunning, playerRunningRect, Color.White);
                 _spriteBatch.Draw(tacklingPlayer, new Rectangle(450, 330, 150, 150), Color.White);
             }
-            
-            
+            else if (screen == Screen.touchDown)
+            {
+                _spriteBatch.Draw(touchDown, window, Color.White);
+                _spriteBatch.DrawString(timeFont, "TOUCHDOWNNNNN!", new Vector2(550, 300), Color.Red);
+            }
+           
             
             _spriteBatch.End();
             // TODO: Add your drawing code here
